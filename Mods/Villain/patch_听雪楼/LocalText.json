@@ -1,0 +1,30 @@
+[
+    {
+        "id": 5305301,
+        "key": "role_feature_postnatal_name888801",
+        "ch": "蒙面",
+        "tc": "",
+        "en": ""
+    },
+    {
+        "id": 5305302,
+        "key": "role_feature_postnatal_tips888801",
+        "ch": "杀人之后不会被其亲友发觉",
+        "tc": "",
+        "en": ""
+    },
+    {
+        "id": 5305303,
+        "key": "role_feature_postnatal_name888802",
+        "ch": "杀气",
+        "tc": "",
+        "en": ""
+    },
+    {
+        "id": 5305304,
+        "key": "role_feature_postnatal_tips888801",
+        "ch": "蒙面杀人后持续三个月, 期间经过其他修仙者附近时会被攻击",
+        "tc": "",
+        "en": ""
+    }
+]
