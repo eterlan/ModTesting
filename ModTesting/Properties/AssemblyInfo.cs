@@ -13,7 +13,7 @@ using MelonLoader;
 [assembly: AssemblyCopyright("Copyright ©  2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: MelonInfo(typeof(ModTesting.MyFirstMod), "My First Mod", "0.0.1", "Eterlan")]
+[assembly: MelonInfo(typeof(TXL.TXL), "My First Mod", "0.0.1", "Eterlan")]
 [assembly: MelonGame("guigugame", "guigubahuang")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 

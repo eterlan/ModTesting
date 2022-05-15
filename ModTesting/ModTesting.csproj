@@ -59,7 +59,8 @@
         <Reference Include="ZuiXianLou" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="MyFirstMod.cs" />
+        <Compile Include="API.cs" />
+        <Compile Include="TXL.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
