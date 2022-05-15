@@ -11,6 +11,13 @@
         public static void RemoveLuck(WorldUnitBase unit, int id)
         {
             var act = new UnitActionLuckDel(id);
+            unit.CreateAction(act);
+        }
+
+        public static bool HasLuck(WorldUnitBase unit, int id)
+        {
+            EGameType.
+            return unit.GetLuck(id) != null;
         }
     }
 }
