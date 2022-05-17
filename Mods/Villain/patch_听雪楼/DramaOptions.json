@@ -1,0 +1,26 @@
+[
+    {
+      "id": 204033,
+      "condition": "0",
+      "hue": 0,
+      "optionsHide": 0,
+      "text": "drama_option204033",
+      "cost": "0",
+      "costHide": 0,
+      "function": "sound_sharen|addFeature_888802",
+      "clickTip": "0",
+      "nextDialogue": "0"
+    },
+    {
+      "id": 204042,
+      "condition": "0",
+      "hue": 0,
+      "optionsHide": 0,
+      "text": "drama_option204042",
+      "cost": "0",
+      "costHide": 0,
+      "function": "sound_sharen|addFeature_888802",
+      "clickTip": "0",
+      "nextDialogue": "0"
+    }
+]

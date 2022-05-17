@@ -16,7 +16,6 @@
 
         public static bool HasLuck(WorldUnitBase unit, int id)
         {
-            EGameType.
             return unit.GetLuck(id) != null;
         }
     }
