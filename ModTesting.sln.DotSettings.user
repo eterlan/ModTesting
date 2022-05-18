@@ -23,5 +23,7 @@
   &lt;Assembly Path="C:\Users\2020\RiderProjects\ModTesting\ModTesting\bin\Debug\ZuiXianLou.dll" /&gt;&#xD;
   &lt;Assembly Path="C:\Users\2020\RiderProjects\ModTesting\ModTesting\bin\Debug\WindWave.dll" /&gt;&#xD;
   &lt;Assembly Path="C:\Program Files (x86)\Steam\steamapps\common\ggbh\MelonLoader\Managed\Assembly-CSharp.dll" /&gt;&#xD;
+  &lt;Assembly Path="C:\Users\2020\RiderProjects\ModTesting\ModTesting\bin\Debug\MelonLoader.dll" /&gt;&#xD;
+  &lt;Assembly Path="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\mscorlib.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
 	</wpf:ResourceDictionary>

@@ -1,6 +1,8 @@
 ﻿using System;
 using MelonLoader;
+using UnhollowerRuntimeLib;
 using UnityEngine;
+using Type = Il2CppSystem.Type;
 
 
 namespace TXL
@@ -22,33 +24,36 @@ namespace TXL
             }
         }
 
-        public class{ 
-
-            void ss(){
-                Action s = ()=>{MelonLogger.Msg("asda");}; 
-                g.events.On(EGameType.WorldUnitDie, (Il2CppSystem.Action)s);
-            }	
-
+        void test()
+        {
+            MelonLogger.Msg("1");
+            // 测试监听
+            Action<ETypeData> testData = TestData;
+            g.events.On(EGameType.OpenUIEnd, testData);
+        }
+        // 设置他人的关系时
+        private void TestData(ETypeData e)
+        {
+            var edata = e.Cast<EGameTypeData.OpenUIEnd>();
+        }
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
-            if (SceneType.login.sceneName == sceneName)
-            {
-                Action s = () => { MelonLogger.Msg("asda");}; 
-                void ss(){};
-                g.events.On(EGameType.WorldUnitDie, (Il2CppSystem.Action)s);
+            test();
+            MelonLogger.Msg("2");
                 onKillAct = OnKill;
-                MelonLogger.Msg($"{sceneName}");
-                g.events.On(EGameType.WorldUnitDie, onKillAct);
+                //g.events.On(EGameType.WorldUnitDie, onKillAct);
+                var eType = Il2CppType.Of<UnitActionRoleKill>();
+                var e = EGameType.OneUnitCreateOneActionBack(g.world.playerUnit, eType) ;
                 
-            }
-            base.OnSceneWasLoaded(buildIndex, sceneName);
+                g.events.On(e, onKillAct);
+            
             MelonLogger.Msg($"sceneWasLoaded, {sceneName}");
         }
 
         public override void OnApplicationQuit()
         {
             base.OnApplicationQuit();
-            g.events.Off(EGameType.WorldUnitDie, onKillAct);
+            //g.events.Off(EGameType.WorldUnitDie, onKillAct);
             Debug.Log("QUit");
         }
 
@@ -82,11 +87,9 @@ namespace TXL
 
         private void OnKill(ETypeData eTypeData)
         {
-            var eData = eTypeData as EGameTypeData.WorldUnitDie;
-            var dieUnitId = eData.unit.data.unitData.unitID;
-            Debug.Log(dieUnitId);
-            var killerId = g.data.unitDie.GetUnitDie(dieUnitId).killUnitID;
-            Debug.Log(killerId);
+            var eData = eTypeData.Cast<EGameTypeData.OneUnitCreateOneActionBack>();
+            var dieUnitId = eData.action.unit;
+            MelonLogger.Msg(dieUnitId);
         }
     }
 }
