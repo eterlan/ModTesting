@@ -1,34 +1,26 @@
-﻿using System;
-using MelonLoader;
+﻿using MelonLoader;
 using UnhollowerRuntimeLib;
 using UnityEngine;
-using Type = Il2CppSystem.Type;
+using Il2CppSystem;
+using Action = Il2CppSystem.Action;
 
 
 namespace TXL
 {
     public class TXL : MelonMod
     {
-        public int SuspectValue;
-        public const int FaceMaskId = 888801;
-        public const int BloodThirstyId = 888802;
-        private System.Action<ETypeData> onKillAct;
-        private bool eventInit;
+        private bool init;
+        private InitListener initListener;
 
         public override void OnUpdate()
         {
             base.OnUpdate();
-            if (Input.GetKeyDown(KeyCode.T))
-            {
-                MelonLogger.Msg($"怀疑度: {SuspectValue.ToString()}");
-                SuspectValue += 10;
-            }
         }
         
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
             Debug.Log($"sceneWasLoaded, {sceneName}");
-            if (eventInit)
+            if (init)
             {
                 return;
             }
@@ -39,32 +31,16 @@ namespace TXL
             }
             
             Debug.Log("Init");
-            eventInit = true;
-            onKillAct = OnKill;
-            var eType = Il2CppType.Of<UnitActionRoleKill>();
-            var e = EGameType.OneUnitCreateOneActionBack(g.world.playerUnit, eType) ;
-            
-            g.events.On(e, onKillAct);
-            
+            init = true;
+            initListener = new InitListener();
+            initListener.Init();
+
         }
 
         public override void OnApplicationQuit()
         {
             base.OnApplicationQuit();
-            g.events.Off(EGameType.WorldUnitDie, onKillAct);
-            Debug.Log("QUit");
-        }
-
-        private void OnKill(ETypeData eTypeData)
-        {
-            var eData = eTypeData.Cast<EGameTypeData.OneUnitCreateOneActionBack>();
-            var killer = eData.action.unit;
-            var hasMask = killer.GetLuck(FaceMaskId);
-            if (hasMask == null)
-            {
-                return;
-            }
-            API.AddLuck(killer, BloodThirstyId);
+            initListener.Destroy();
         }
         
         public override void OnGUI() 
