@@ -5,18 +5,15 @@ using UnityEngine;
 
 namespace TXL
 {
-    public class InitListener
+    public class KillSecretly
     {
-        public int SuspectValue;
-        public const int FaceMaskId = 888801;
-        public const int BloodThirstyId = 888802;
         private System.Action<ETypeData> onKillAct;
 
         
         public void Init()
         {
             var eKill = EGameType.OneUnitCreateOneActionBack(g.world.playerUnit, Il2CppType.Of<UnitActionRoleKill>());
-            var eMove = EGameType.OneCreateActionBack(Il2CppType.Of<UnitActionMovePlayer>());
+            var eMove = EGameType.OneUnitCreateOneActionBack(g.world.playerUnit, Il2CppType.Of<UnitActionMovePlayer>());
             g.events.On(eKill, onKillAct);
             g.events.On(EGameType.OneOpenUIEnd(UIType.Town), (Action)OnTownOpenEnd);
             g.events.On(eMove, (Action<ETypeData>)OnPlayerMove);
@@ -28,6 +25,7 @@ namespace TXL
         {
             g.events.Off(EGameType.WorldUnitDie, onKillAct);
             g.events.Off(EGameType.OneOpenUIEnd(UIType.Town), (Action)OnTownOpenEnd);
+            g.events.Off(EGameType.OneUnitCreateOneActionBack(g.world.playerUnit, Il2CppType.Of<UnitActionMovePlayer>()));
 
             Debug.Log("QUit");
         }
@@ -35,12 +33,12 @@ namespace TXL
         {
             var eData = eTypeData.Cast<EGameTypeData.OneUnitCreateOneActionBack>();
             var killer = eData.action.unit;
-            var hasMask = killer.GetLuck(FaceMaskId);
+            var hasMask = killer.GetLuck(Variable.FaceMaskId);
             if (hasMask == null)
             {
                 return;
             }
-            API.AddLuck(killer, BloodThirstyId);
+            API.AddLuck(killer, Variable.BloodThirstyId);
         }
         
         private void OnTownOpenEnd()
@@ -48,18 +46,35 @@ namespace TXL
             Debug.Log("TownOpen");
         }
 
-        private void OnPlayerMove(ETypeData eTypeData)
+        public void OnPlayerMove(ETypeData eTypeData)
         {
+            var gridData = g.world.playerUnit.data.unitData.pointGridData;
+            Debug.Log(g.world.playerUnit.data.unitData.pointGridData._terrainType.name);
+            Debug.Log(VAR);
             var eData = eTypeData.Cast<EGameTypeData.OneUnitCreateOneActionBack>();
+            var point = g.world.playerUnit.data.unitData.GetPoint();
+            Debug.Log(point.ToString());
+            var units = GetRangeUnitsOnGrid(point, 2);
+            for (var i = 0; i < units.Count; i++)
+            {
+                var sp = units[i].data.dynUnitData.sp;
+                var level = units[i].data.dynUnitData.curGrade;
+                var name = units[i].data.unitData.unitID;
+                var pos = units[i].data.unitData.GetPoint();
+                Debug.Log($"{name} at {pos.ToString()} level: {level}, sp: {sp}");
+            }
         }
 
         public List<WorldUnitBase> GetRangeUnitsOnGrid(Vector2Int point, int range)
         {
             var points = GetRangePoints(point, range);
+            var units = new List<WorldUnitBase>();
             for (var i = 0; i < points.Count; i++)
             {
-                g.data.map.GetGridUnit(point);
+                units.AddRange(g.data.map.GetGridUnit(point).Cast<IEnumerable<WorldUnitBase>>());
             }
+
+            return units;
         }
 
         public static List<Vector2Int> GetRangePoints(Vector2Int point, int range)
