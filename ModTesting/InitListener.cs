@@ -1,4 +1,4 @@
-﻿using Il2CppSystem.Collections.Generic;
+﻿using System.Collections.Generic;
 using Il2CppSystem;
 using UnhollowerRuntimeLib;
 using UnityEngine;
@@ -51,15 +51,38 @@ namespace TXL
         private void OnPlayerMove(ETypeData eTypeData)
         {
             var eData = eTypeData.Cast<EGameTypeData.OneUnitCreateOneActionBack>();
+            var unitData = g.world.playerUnit.data.unitData;
+            var units = GetRangeUnitsOnGrid(unitData.GetPoint(), 2);
+            for (var i = 0; i < units.Count; i++)
+            {
+                // 获取念力, 获取id, 判断是否在组织中.
+                var id = units[i].data.unitData.unitID;
+                var sp = units[i].data.dynUnitData.sp;
+                
+            }
+            Debug.Log($"terrainType: {unitData.pointGridData._terrainType.name}, id: {unitData.pointGridData._terrainType.id}");
         }
 
         public List<WorldUnitBase> GetRangeUnitsOnGrid(Vector2Int point, int range)
         {
             var points = GetRangePoints(point, range);
+            var units = new List<WorldUnitBase>();
             for (var i = 0; i < points.Count; i++)
             {
-                g.data.map.GetGridUnit(point);
+                var oneGridUnits = g.data.map.GetGridUnit(point);
+                if (oneGridUnits == null)
+                {
+                    Debug.Log("This grid has no unit, continue to next grid...");
+                    continue;
+                }
+                for (var j = 0; j < oneGridUnits.Count; j++)
+                {   
+                    units.Add(oneGridUnits[j]);
+                }
             }
+
+            Debug.Log($"point: {point}, range: {range}, {units.Count} units found");
+            return units;
         }
 
         public static List<Vector2Int> GetRangePoints(Vector2Int point, int range)
