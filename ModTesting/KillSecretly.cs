@@ -1,22 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using Il2CppSystem.Collections.Generic;
 using Il2CppSystem;
 using UnhollowerRuntimeLib;
 using UnityEngine;
 
 namespace TXL
 {
-    public class InitListener
+    public class KillSecretly
     {
-        public int SuspectValue;
-        public const int FaceMaskId = 888801;
-        public const int BloodThirstyId = 888802;
         private System.Action<ETypeData> onKillAct;
 
         
         public void Init()
         {
             var eKill = EGameType.OneUnitCreateOneActionBack(g.world.playerUnit, Il2CppType.Of<UnitActionRoleKill>());
-            var eMove = EGameType.OneCreateActionBack(Il2CppType.Of<UnitActionMovePlayer>());
+            var eMove = EGameType.OneUnitCreateOneActionBack(g.world.playerUnit, Il2CppType.Of<UnitActionMovePlayer>());
             g.events.On(eKill, onKillAct);
             g.events.On(EGameType.OneOpenUIEnd(UIType.Town), (Action)OnTownOpenEnd);
             g.events.On(eMove, (Action<ETypeData>)OnPlayerMove);
@@ -28,6 +25,7 @@ namespace TXL
         {
             g.events.Off(EGameType.WorldUnitDie, onKillAct);
             g.events.Off(EGameType.OneOpenUIEnd(UIType.Town), (Action)OnTownOpenEnd);
+            g.events.Off(EGameType.OneUnitCreateOneActionBack(g.world.playerUnit, Il2CppType.Of<UnitActionMovePlayer>()));
 
             Debug.Log("QUit");
         }
@@ -35,12 +33,12 @@ namespace TXL
         {
             var eData = eTypeData.Cast<EGameTypeData.OneUnitCreateOneActionBack>();
             var killer = eData.action.unit;
-            var hasMask = killer.GetLuck(FaceMaskId);
+            var hasMask = killer.GetLuck(Variable.FaceMaskId);
             if (hasMask == null)
             {
                 return;
             }
-            API.AddLuck(killer, BloodThirstyId);
+            API.AddLuck(killer, Variable.BloodThirstyId);
         }
         
         private void OnTownOpenEnd()
@@ -48,19 +46,23 @@ namespace TXL
             Debug.Log("TownOpen");
         }
 
-        private void OnPlayerMove(ETypeData eTypeData)
+        public void OnPlayerMove(ETypeData eTypeData)
         {
+            var gridData = g.world.playerUnit.data.unitData.pointGridData;
+            Debug.Log(gridData._terrainType.name);
+            Debug.Log(gridData.safety.ToString());
             var eData = eTypeData.Cast<EGameTypeData.OneUnitCreateOneActionBack>();
-            var unitData = g.world.playerUnit.data.unitData;
-            var units = GetRangeUnitsOnGrid(unitData.GetPoint(), 2);
+            var point = g.world.playerUnit.data.unitData.GetPoint();
+            Debug.Log(point.ToString());
+            var units = GetRangeUnitsOnGrid(point, 2);
             for (var i = 0; i < units.Count; i++)
             {
-                // 获取念力, 获取id, 判断是否在组织中.
-                var id = units[i].data.unitData.unitID;
                 var sp = units[i].data.dynUnitData.sp;
-                
+                var level = units[i].data.dynUnitData.curGrade;
+                var name = units[i].data.unitData.unitID;
+                var pos = units[i].data.unitData.GetPoint();
+                Debug.Log($"{name} at {pos.ToString()} level: {level}, sp: {sp}");
             }
-            Debug.Log($"terrainType: {unitData.pointGridData._terrainType.name}, id: {unitData.pointGridData._terrainType.id}");
         }
 
         public List<WorldUnitBase> GetRangeUnitsOnGrid(Vector2Int point, int range)
@@ -69,19 +71,9 @@ namespace TXL
             var units = new List<WorldUnitBase>();
             for (var i = 0; i < points.Count; i++)
             {
-                var oneGridUnits = g.data.map.GetGridUnit(point);
-                if (oneGridUnits == null)
-                {
-                    Debug.Log("This grid has no unit, continue to next grid...");
-                    continue;
-                }
-                for (var j = 0; j < oneGridUnits.Count; j++)
-                {   
-                    units.Add(oneGridUnits[j]);
-                }
+                units.AddRange(g.data.map.GetGridUnit(point).Cast<IEnumerable<WorldUnitBase>>());
             }
 
-            Debug.Log($"point: {point}, range: {range}, {units.Count} units found");
             return units;
         }
 
